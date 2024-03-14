@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:securezone/screens/home.dart';
+import 'package:securezone/screens/news_screen.dart';
 import 'package:securezone/screens/reports_screen.dart';
+import 'package:securezone/screens/settings_screen.dart';
+import 'package:securezone/widgets/new_report.dart';
 
 var knavbartheme = const Color.fromARGB(255, 201, 28, 28);
 
+var knavbarselected = const Color.fromARGB(255, 255, 222, 222);
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -36,46 +40,98 @@ class _TabsScreenState extends State<TabsScreen> {
   //   setState(() {
   //     _selectedFilters = result ?? kInitialFilters;
   //   });
-     
+
   //   }
   // }
 
   //Build Logic
+  var currentPageIndex = 0;
+
+  void _openAddExpense()
+  {
+    showModalBottomSheet(
+        useSafeArea: true,
+        isScrollControlled: true,
+        context: context,
+        builder: (ctx) {
+          return NewReport();
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
     Widget activePage = HomeScreen();
 
-    var activePageTitle = 'Categories';
-
-    if (_selectedPageIndex == 1) {
+    if (currentPageIndex == 1) {
       activePage = ReportsScreen();
-      activePageTitle = 'reports';
+    } 
+    else if(currentPageIndex == 2)
+    {
+      _openAddExpense();
+    }
+    else if (currentPageIndex == 3) {
+      activePage = NewsScreen();
+    } else if (currentPageIndex == 4) {
+      activePage = SettingsScreen();
     }
 
     return Scaffold(
-      appBar: AppBar(
-      ),
       body: activePage,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedPageIndex,
-        unselectedLabelStyle: const TextStyle(color: Colors.black),
-        selectedLabelStyle: TextStyle(color: Colors.black),
-        showUnselectedLabels: true,
-        // fixedColor: const Color.fromARGB(255, 197, 0, 0),
-        unselectedItemColor: Colors.black,
-        selectedItemColor: knavbartheme,
-        iconSize: 30,
-        items: [
-          BottomNavigationBarItem( icon: Icon(Icons.home_outlined,color: knavbartheme), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.edit_document,color: knavbartheme), label: 'Reports'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle,color: knavbartheme),label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.newspaper_outlined,color: knavbartheme,), label: 'News'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings,color: knavbartheme), label: 'Settings'),
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        backgroundColor: Colors.white,
+        indicatorColor: knavbarselected,
+        selectedIndex: currentPageIndex,
+        destinations: <Widget>[
+          NavigationDestination(
+            // selectedIcon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+              color: knavbartheme,
+            ),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Badge(
+                child: Icon(
+              Icons.edit_document,
+              color: knavbartheme,
+            )),
+            label: 'Reports',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(
+              Icons.arrow_drop_down_circle,
+              color: knavbartheme,
+            ),
+            icon: Icon(
+              Icons.add_circle,
+              color: knavbartheme,
+            ),
+            label: 'Add',
+          ),
+          NavigationDestination(
+            icon: Badge(
+              label: Text('2'),
+              child: Icon(
+                Icons.newspaper_outlined,
+                color: knavbartheme,
+              ),
+            ),
+            label: 'News',
+          ),
+          NavigationDestination(
+            icon: Icon(
+              Icons.settings,
+              color: knavbartheme,
+            ),
+            label: 'Settings',
+          ),
         ],
-        onTap: _selectpage,
       ),
     );
   }
