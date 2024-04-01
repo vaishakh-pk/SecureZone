@@ -3,6 +3,7 @@ import 'package:securezone/screens/home.dart';
 import 'package:securezone/screens/news_screen.dart';
 import 'package:securezone/screens/reports_screen.dart';
 import 'package:securezone/screens/settings_screen.dart';
+import 'package:securezone/screens/sos.dart';
 import 'package:securezone/widgets/new_report.dart';
 
 var knavbartheme = const Color.fromARGB(255, 201, 28, 28);
@@ -47,37 +48,48 @@ class _TabsScreenState extends State<TabsScreen> {
   //Build Logic
   var currentPageIndex = 0;
 
-  void _openAddExpense()
-  {
+  void _openAddReportOverlay() {
     showModalBottomSheet(
         useSafeArea: true,
+        useRootNavigator: true,
         isScrollControlled: true,
+        isDismissible: true,
         context: context,
         builder: (ctx) {
           return NewReport();
+        }).then((value){
+          setState(() {
+            currentPageIndex = 0;
+          });
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage = HomeScreen();
+    // Widget activePage = HomeScreen();
+     Widget activePage = HomeScreen();
 
     if (currentPageIndex == 1) {
       activePage = ReportsScreen();
-    } 
-    else if(currentPageIndex == 2)
-    {
-      _openAddExpense();
-    }
-    else if (currentPageIndex == 3) {
+    } else if (currentPageIndex == 2) {
+      // Schedule the modal sheet to open after the build process is complete.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!ModalRoute.of(context)!.isCurrent) {
+                // This check ensures the callback does not run if the user navigates away from the current route
+                // before the callback is executed.
+                return;
+            }
+            _openAddReportOverlay();
+        });
+    } else if (currentPageIndex == 3) {
       activePage = NewsScreen();
     } else if (currentPageIndex == 4) {
       activePage = SettingsScreen();
     }
 
     return Scaffold(
-      body: activePage,
       bottomNavigationBar: NavigationBar(
+        elevation: 10,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -133,6 +145,7 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
         ],
       ),
+      body: activePage,
     );
   }
 }
