@@ -81,9 +81,10 @@ class _GMapScreenState extends State<GMapScreen> {
               icon: BitmapDescriptor.defaultMarker,
               position: _currentP!),
           Marker(
+              infoWindow: InfoWindow(title: "Test"),
               markerId: MarkerId("_sourcelocation"),
               icon: BitmapDescriptor.defaultMarker,
-              position: _pGooglePlex)
+              position: _pGooglePlex),
         },
       ),
     );

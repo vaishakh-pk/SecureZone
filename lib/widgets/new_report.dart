@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:securezone/screens/tabs.dart';
 import 'package:securezone/services/DBServices.dart';
 
+
 class NewReport extends StatefulWidget {
   const NewReport({super.key});
 
@@ -19,9 +20,6 @@ TextEditingController _typeController = TextEditingController();
 TextEditingController _yearController = TextEditingController();
 TextEditingController _urlController = TextEditingController();
 TextEditingController _locationController = TextEditingController();
-
-
-  
 
 class _NewReportState extends State<NewReport> {
   @override
@@ -140,33 +138,34 @@ class _NewReportState extends State<NewReport> {
               height: 10,
             ),
             InkWell(
-              onTap:(){
+              onTap: () {
                 showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Select Year"),
-        content: Container(
-          width: 300,
-          height: 300,
-          child: YearPicker(
-            firstDate: DateTime(DateTime.now().year - 100),
-            lastDate: DateTime(DateTime.now().year),
-            selectedDate: _selectedDate,
-            onChanged: (DateTime dateTime) {
-              setState(() {
-                _selectedDate = dateTime;
-                _yearController.text = _selectedDate.year.toString();
-              });
-              Navigator.pop(context);
-              // Do something with the dateTime selected.
-              // Remember that you need to use dateTime.year to get the year
-            },
-          ),
-        ),
-      );
-    },
-  );
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Select Year"),
+                      content: Container(
+                        width: 300,
+                        height: 300,
+                        child: YearPicker(
+                          firstDate: DateTime(DateTime.now().year - 100),
+                          lastDate: DateTime(DateTime.now().year),
+                          selectedDate: _selectedDate,
+                          onChanged: (DateTime dateTime) {
+                            setState(() {
+                              _selectedDate = dateTime;
+                              _yearController.text =
+                                  _selectedDate.year.toString();
+                            });
+                            Navigator.pop(context);
+                            // Do something with the dateTime selected.
+                            // Remember that you need to use dateTime.year to get the year
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
               child: Container(
                   padding: const EdgeInsets.all(20),
@@ -185,8 +184,12 @@ class _NewReportState extends State<NewReport> {
             SizedBox(
               height: 10,
             ),
+
+
+            //Location Picker
+            
             ElevatedButton(
-                onPressed: () async{
+                onPressed: () async {
                   await DBFunctions.addNewReport(
                       _titleController,
                       _descriptionController,
@@ -195,7 +198,7 @@ class _NewReportState extends State<NewReport> {
                       _urlController,
                       _locationController);
 
-                      Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

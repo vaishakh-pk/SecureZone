@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:securezone/model/news_model.dart';
 import 'package:securezone/model/report_model.dart';
+import 'package:securezone/services/DBServices.dart';
 import 'package:securezone/widgets/news_item.dart';
 
-class NewsScreen extends StatelessWidget {
-  final List<NewsItem> news = [
-    NewsItem("Title-1",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "),
-    NewsItem("Title-2",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. "),
-    NewsItem("Title-3",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry."),
-    NewsItem("Title-4",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry."),
-  ];
+class NewsScreen extends StatefulWidget {
+
+  @override
+  State<NewsScreen> createState() => _NewsScreenState();
+}
+
+class _NewsScreenState extends State<NewsScreen> {
+  List<Map<String, String>> news = [];
+
+  @override
+  void initState(){
+    super.initState();
+    fetchReports();
+  }
+
+Future<void> fetchReports() async {
+    // Call the fetchAllReports method from DBFunctions
+    List<Map<String, String>> fetchedReports = await DBFunctions.fetchAllReports();
+    // Update the state with the fetched reports
+    setState(() {
+      news = fetchedReports;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

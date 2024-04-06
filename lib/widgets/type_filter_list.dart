@@ -4,7 +4,7 @@ import 'package:securezone/widgets/type_filter_item.dart';
 class TypeFilterList extends StatelessWidget {
 TypeFilterList({super.key});
 
-List<String> typesItems = ['Type-1','Type-2','Type-3','Type-4'];
+List<String> typesItems = ['All','Accident','Natural','Theft','PickPocket','Assault','Murder','Other'];
 
   @override
   Widget build(BuildContext context) {

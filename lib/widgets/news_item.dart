@@ -4,7 +4,7 @@ import 'package:securezone/model/report_model.dart';
 import 'package:securezone/screens/reports_screen.dart';
 
 class NewsItemWidget extends StatelessWidget {
-  final NewsItem news;
+  final Map<String, String> news;
 
   const NewsItemWidget({Key? key, required this.news}) : super(key: key);
 
@@ -31,13 +31,13 @@ class NewsItemWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                         20.0), // Circular border radius for the title
                     child: Text(
-                      news.title,
+                      news['title'] ?? '',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    news.description,
+                    news['description'] ?? '',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                   const SizedBox(height: 4.0),
