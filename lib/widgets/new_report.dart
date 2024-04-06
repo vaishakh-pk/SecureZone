@@ -20,31 +20,8 @@ TextEditingController _yearController = TextEditingController();
 TextEditingController _urlController = TextEditingController();
 TextEditingController _locationController = TextEditingController();
 
-void _selectYear(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Select Year"),
-        content: Container(
-          width: 300,
-          height: 300,
-          child: YearPicker(
-            firstDate: DateTime(DateTime.now().year - 100),
-            lastDate: DateTime(DateTime.now().year),
-            selectedDate: _selectedDate,
-            onChanged: (DateTime dateTime) {
-              _selectedDate = dateTime;
-              Navigator.pop(context);
-              // Do something with the dateTime selected.
-              // Remember that you need to use dateTime.year to get the year
-            },
-          ),
-        ),
-      );
-    },
-  );
-}
+
+  
 
 class _NewReportState extends State<NewReport> {
   @override
@@ -164,9 +141,32 @@ class _NewReportState extends State<NewReport> {
             ),
             InkWell(
               onTap:(){
-                setState(() {
-                  _selectYear(context);
-                });
+                showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Select Year"),
+        content: Container(
+          width: 300,
+          height: 300,
+          child: YearPicker(
+            firstDate: DateTime(DateTime.now().year - 100),
+            lastDate: DateTime(DateTime.now().year),
+            selectedDate: _selectedDate,
+            onChanged: (DateTime dateTime) {
+              setState(() {
+                _selectedDate = dateTime;
+                _yearController.text = _selectedDate.year.toString();
+              });
+              Navigator.pop(context);
+              // Do something with the dateTime selected.
+              // Remember that you need to use dateTime.year to get the year
+            },
+          ),
+        ),
+      );
+    },
+  );
               },
               child: Container(
                   padding: const EdgeInsets.all(20),
@@ -186,14 +186,16 @@ class _NewReportState extends State<NewReport> {
               height: 10,
             ),
             ElevatedButton(
-                onPressed: () {
-                  DBFunctions.addNewReport(
+                onPressed: () async{
+                  await DBFunctions.addNewReport(
                       _titleController,
                       _descriptionController,
                       _typeController,
                       _yearController,
                       _urlController,
                       _locationController);
+
+                      Navigator.pop(context);
                 },
                 style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

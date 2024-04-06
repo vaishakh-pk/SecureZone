@@ -26,7 +26,7 @@ class DBFunctions
         'title': _titleController.text,
         'description': _descriptionController.text,
         'type': _typeController.text,
-        // 'year': _yearController.text,
+        'year': _yearController.text,
         'url': _urlController.text,
         // 'location': _locationController.text,
         'userID' : userId,
