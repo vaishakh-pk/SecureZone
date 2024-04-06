@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:securezone/screens/google_maps_screen.dart';
 import 'package:securezone/screens/map_screen.dart';
 import 'package:securezone/screens/sos.dart';
 import 'package:securezone/screens/tabs.dart';
@@ -13,15 +14,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: knavbartheme,
-        onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>SOSScreen()));},
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        child: Text('SOS',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white)),
-      ),
       body: 
       Stack(children: [
-        const MapScreen(),
+        const GMapScreen(),
         SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
