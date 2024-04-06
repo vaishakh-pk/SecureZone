@@ -40,7 +40,7 @@ class _GMapScreenState extends State<GMapScreen> {
 
   void addCustomIcon() {
     BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(),
+      const ImageConfiguration(size: Size(200, 200)),
       "images/green2.png",
     ).then(
       (icon) {
@@ -127,7 +127,7 @@ class _GMapScreenState extends State<GMapScreen> {
               Marker(
                   infoWindow: InfoWindow(title: report["title"]),
                   markerId: MarkerId(report['title']!),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(double.parse(report['hue']!)),
+                  icon: markerIcon,
                   position: LatLng(double.parse(report['lattitude']!),
                       double.parse(report['longitude']!))),
         },
