@@ -5,12 +5,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:random_string/random_string.dart';
 
 class DBFunctions {
-  static GeoPoint currentLoc = GeoPoint(10, 25);
+  static double currentLat = 10;
+  static double currentLong = 78;
   static List<Map<String, String>> allReports = [];
-  Future<String> getUser() async {
+  static Future<String> getUser() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-    return userId!;
+    
+    final docSnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId!)
+          .get();
+    final role = docSnapshot.data()?['role'];
+    return role!;
   }
 
   static Future<void> addNewReport(
@@ -33,10 +39,12 @@ class DBFunctions {
         'type': _typeController.text,
         'year': _yearController.text,
         'url': _urlController.text,
-        'location': GeoPoint(10.0452, 76.3267),
+        'lattitude': currentLat,
+        'longitude': currentLong,
         'userID': userId,
         'isApproved': false,
-        'timestamp': DateTime.now()
+        'timestamp': DateTime.now(),
+        'reportId' : reportid
       });
     }
   }
@@ -74,6 +82,48 @@ class DBFunctions {
 
   return reports;
 }
+
+  static Future<List<Map<String, String>>> unApprovedReports() async {
+  List<Map<String, String>> reports = [];
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('Reports')
+        .where('isApproved', isEqualTo: false)  // Filter reports based on userID
+        .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+
+  return reports;
+}
+
+static Future<void> approveReport(String reportId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Reports')
+          .doc(reportId)
+          .update({'isApproved': true});
+    } catch (e) {
+      // Handle errors here
+      print('Error approving report: $e');
+    }
+  }
+
+static Future<void> deleteReport(String reportId) async {
+    try {
+      await FirebaseFirestore.instance.collection('Reports').doc(reportId).delete();
+    } catch (e) {
+      // Handle errors here
+      print('Error deleting report: $e');
+    }
+  }
+
+  static Future<void> signOut() async {
+  await FirebaseAuth.instance.signOut();
+}
+
+
 
 
 

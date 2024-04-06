@@ -198,6 +198,11 @@ class _NewReportState extends State<NewReport> {
                       _urlController,
                       _locationController);
 
+                    _titleController.text = '';
+                      _descriptionController.text = '';
+                      _typeController.text = '';
+                      _yearController.text = '';
+                      _urlController.text = '';
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(

@@ -4,6 +4,7 @@ import 'package:securezone/screens/news_screen.dart';
 import 'package:securezone/screens/reports_screen.dart';
 import 'package:securezone/screens/settings_screen.dart';
 import 'package:securezone/screens/sos.dart';
+import 'package:securezone/services/DBServices.dart';
 import 'package:securezone/widgets/new_report.dart';
 
 var knavbartheme = const Color.fromARGB(255, 201, 28, 28);
@@ -11,8 +12,9 @@ var knavbartheme = const Color.fromARGB(255, 201, 28, 28);
 var knavbarselected = const Color.fromARGB(255, 255, 222, 222);
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({super.key});
+ TabsScreen({super.key, required this.role});
 
+  String role;
   @override
   State<TabsScreen> createState() => _TabsScreenState();
 }
@@ -25,6 +27,7 @@ class _TabsScreenState extends State<TabsScreen> {
       _selectedPageIndex = index;
     });
   }
+
 
   // void _showInfoMessage(String message) {
   //   ScaffoldMessenger.of(context).clearSnackBars();
@@ -67,10 +70,10 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     // Widget activePage = HomeScreen();
-     Widget activePage = HomeScreen();
-
+     Widget activePage = HomeScreen(role: widget.role);
+  
     if (currentPageIndex == 1) {
-      activePage = ReportsScreen();
+      activePage = ReportsScreen(role: widget.role,);
     } else if (currentPageIndex == 2) {
       // Schedule the modal sheet to open after the build process is complete.
         WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:securezone/screens/emergency_contacts_screen.dart';
+import 'package:securezone/screens/phone_authentication_screen.dart';
 import 'package:securezone/screens/tabs.dart';
+import 'package:securezone/services/DBServices.dart';
 import 'package:securezone/widgets/settings_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -11,6 +14,27 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String? userNumber;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserDetails();
+    
+  }
+
+    Future<void> getUserDetails()
+  async {
+    String? getNumber = await FirebaseAuth.instance.currentUser?.phoneNumber;
+    setState(() {
+    
+      userNumber = getNumber;
+  
+    });
+    }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -62,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Super User',
+                              userNumber.toString(),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
@@ -73,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
+                                  .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).hintColor),
                             )
                           ],
                         ),
@@ -112,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                SettingsTile(titleText: 'Logout', logo: Icons.close_rounded),
+                SettingsTile(titleText: 'Logout', logo: Icons.close_rounded,passed: (){DBFunctions.signOut(); Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PhoneAuthPage()));},),
               ],
             ),
           ),

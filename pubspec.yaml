@@ -36,11 +36,11 @@ dependencies:
     sdk: flutter
   flutter_map: ^6.1.0
   google_fonts: ^6.2.1
-  latlong2: ^0.9.0
   google_maps_flutter: ^2.5.0
+  latlong2: ^0.9.0
   location: ^5.0.0
   random_string: ^2.3.1
-  
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_lints: ^3.0.0
@@ -57,9 +57,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - images/greendot.png
+    - images/green2.png
+    - images/logo.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

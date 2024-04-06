@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:securezone/screens/google_maps_screen.dart';
 import 'package:securezone/screens/tabs.dart';
+import 'package:securezone/services/DBServices.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   @override
@@ -17,7 +19,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
 
   Future<void> verifyPhoneNumber() async {
     await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: _phoneNumberController.text,
+      phoneNumber: "+91" + _phoneNumberController.text,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await signInWithPhoneAuthCredential(credential);
       },
@@ -45,25 +47,46 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
           await _firebaseAuth.signInWithCredential(credential);
       final user = userCredential.user;
       if (user != null) {
-        // Add user to database with default role
-        await FirebaseFirestore.instance.collection("Users").doc(user.uid).set({
-          'uid': user.uid,
-          'role': 'user' // Default role
-          // Add other user details as needed
-        });
-      }
-      // Retrieve the entire user document
-      final docSnapshot = await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(user!.uid)
-          .get();
+        // Check if the user document already exists
+        final userDocSnapshot = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.uid)
+            .get();
 
-// Access the role field from the document data
-      final role = docSnapshot.data()?['role'];
+        // If the document doesn't exist, set UID and role
+        if (!userDocSnapshot.exists) {
+          await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(user.uid)
+              .set({
+            'uid': user.uid,
+            'role': 'user' // Default role
+            // Add other user details as needed
+          });
+        }
 
-      if (role == "user") {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => TabsScreen()));
+        // Retrieve the entire user document
+        final docSnapshot = await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.uid)
+            .get();
+
+        // Access the role field from the document data
+        final role = docSnapshot.data()?['role'];
+
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => TabsScreen(
+                  role: role,
+                )));
+
+        // if (role == "user") {
+        //   Navigator.of(context).pushReplacement(
+        //       MaterialPageRoute(builder: (context) => TabsScreen(role: role,)));
+        // }
+        // else if(role == "super")
+        // {
+        //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => TabsScreen(role: role,)));
+        // }
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
@@ -93,15 +116,16 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('SecureZone'),
-        centerTitle: true,
-      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal:20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Image(
+                height: 300, width: 300, image: AssetImage('images/logo.jpg')),
+            SizedBox(
+              height: 10,
+            ),
             Container(
               padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
@@ -125,24 +149,55 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     borderRadius: BorderRadius.circular(10)),
                 child: TextField(
                   controller: _otpController,
-                  decoration: InputDecoration(labelText: 'Enter OTP'),
+                  decoration: InputDecoration(
+                      labelText: 'Enter OTP', border: InputBorder.none),
                 ),
               ),
             SizedBox(height: 10.0),
             if (verificationId == null)
-              ElevatedButton(
-                onPressed: verificationId == null ? verifyPhoneNumber : null,
-                child: Text('Send OTP'),
+              InkWell(
+                onTap: verificationId == null ? verifyPhoneNumber : null,
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: knavbarselected),
+                  child: Text(
+                    'Send OTP',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
             if (verificationId != null)
-              ElevatedButton(
-                onPressed: () => signInWithPhoneAuthCredential(
+              InkWell(
+                onTap: () => signInWithPhoneAuthCredential(
                   PhoneAuthProvider.credential(
                     verificationId: verificationId!,
                     smsCode: _otpController.text,
                   ),
                 ),
-                child: Text('Submit OTP'),
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: knavbarselected),
+                  child: Text(
+                    'Submit OTP',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
           ],
         ),

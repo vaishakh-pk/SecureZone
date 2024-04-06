@@ -28,8 +28,7 @@ class NewsItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        20.0), // Circular border radius for the title
+                     // Circular border radius for the title
                     child: Text(
                       news['title'] ?? '',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)

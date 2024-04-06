@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:securezone/screens/sos.dart';
 import 'package:securezone/screens/tabs.dart';
+import 'package:securezone/services/DBServices.dart';
 
 class GMapScreen extends StatefulWidget {
   const GMapScreen({super.key});
@@ -16,16 +18,51 @@ class GMapScreen extends StatefulWidget {
 class _GMapScreenState extends State<GMapScreen> {
   Location _locationController = new Location();
 
+  List<Marker> markers = [];
+
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
   static const LatLng _pGooglePlex = LatLng(10.0452, 76.3267);
+
+  List<Map<String, String>> reports = [];
+
+  BitmapDescriptor markerIcon = BitmapDescriptor.defaultMarker;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLocationUpdates();
+    fetchReports();
+    addCustomIcon();
+  }
+
+  void addCustomIcon() {
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(),
+      "images/green2.png",
+    ).then(
+      (icon) {
+        if (icon == null) {
+          print("Error: Failed to load custom marker icon");
+        } else {
+          setState(() {
+            markerIcon = icon;
+          });
+        }
+      },
+    );
+  }
+
+  Future<void> fetchReports() async {
+    // Call the fetchAllReports method from DBFunctions
+    List<Map<String, String>> fetchedReports =
+        await DBFunctions.fetchAllReports();
+    // Update the state with the fetched reports
+    setState(() {
+      reports = fetchedReports;
+    });
   }
 
   LatLng? _currentP = _pGooglePlex;
@@ -74,17 +111,25 @@ class _GMapScreenState extends State<GMapScreen> {
       body: GoogleMap(
         onMapCreated: ((GoogleMapController controller) =>
             _mapController.complete(controller)),
-        initialCameraPosition: CameraPosition(target: _pGooglePlex, zoom: 8),
+        initialCameraPosition: CameraPosition(target: _pGooglePlex, zoom: 11),
         markers: {
           Marker(
               markerId: MarkerId("_currentLocation"),
               icon: BitmapDescriptor.defaultMarker,
               position: _currentP!),
-          Marker(
-              infoWindow: InfoWindow(title: "Test"),
-              markerId: MarkerId("_sourcelocation"),
-              icon: BitmapDescriptor.defaultMarker,
-              position: _pGooglePlex),
+          // Marker(
+          //     infoWindow: InfoWindow(title: "Test"),
+          //     markerId: MarkerId("_sourcelocation"),
+          //     icon: BitmapDescriptor.defaultMarker,
+          //     position: _pGooglePlex),
+          for (var report in reports)
+            if (report['lattitude'] != null && report['longitude'] != null)
+              Marker(
+                  infoWindow: InfoWindow(title: report["title"]),
+                  markerId: MarkerId(report['title']!),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(double.parse(report['hue']!)),
+                  position: LatLng(double.parse(report['lattitude']!),
+                      double.parse(report['longitude']!))),
         },
       ),
     );
@@ -128,6 +173,8 @@ class _GMapScreenState extends State<GMapScreen> {
           _currentP =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
           print(_currentP);
+          DBFunctions.currentLat = _currentP!.latitude;
+          DBFunctions.currentLong = _currentP!.longitude;
         });
       }
     });
