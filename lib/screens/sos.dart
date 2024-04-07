@@ -1,6 +1,12 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:securezone/services/DBServices.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_sms/flutter_sms.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class SOSScreen extends StatefulWidget {
   const SOSScreen({Key? key}) : super(key: key);
@@ -13,13 +19,22 @@ class _SOSScreenState extends State<SOSScreen> {
   late int _timerValue;
   late Timer _timer;
 
+  late String emergencyCall;
+  late List<String> emergencyMessage;
+
   @override
   void initState() {
     super.initState();
     // Set the initial timer value (in seconds)
     _timerValue = 5;
+    fetchContacts();
     // Start the countdown timer
     _startTimer();
+  }
+
+  void fetchContacts() async {
+    emergencyCall = await DBFunctions.fetchCallContacts();
+    emergencyMessage = await DBFunctions.fetchMessageConatcts();
   }
 
   void _startTimer() {
@@ -30,26 +45,53 @@ class _SOSScreenState extends State<SOSScreen> {
         _timerValue--;
         // Check if the timer has reached 0
         if (_timerValue <= 0) {
-          // If timer runs out, initiate call
-          _initiateCall();
+          // If timer runs out, initiate SMS sending
+          _initiateSMS(emergencyMessage);
+          _initiateCall(emergencyCall);
           // Cancel the timer
           _timer.cancel();
+          Navigator.pop(context);
         }
       });
     });
   }
 
-  void _initiateCall() async {
-    const phoneNumber = 'tel:119'; // Replace with your desired phone number
-    try {
-      // Use the newer approach to launch the phone app and make the call
-      await launch(phoneNumber);
-    } catch (e) {
-      // Handle error: Unable to initiate call
-      print('Error: Unable to initiate call');
+  void _initiateCall(String emergencyCallNumber) async {
+    if (emergencyCallNumber != null) {
+      bool? res = await FlutterPhoneDirectCaller.callNumber(emergencyCallNumber);
+      if (res != null && res) {
+        // Call initiated successfully
+        print('Call initiated successfully');
+      } else {
+        // Error occurred while initiating the call
+        print('Error: Unable to initiate call');
+      }
     }
   }
-  
+
+  void _initiateSMS(List<String> recipients) async {
+    // Check if SMS permission is granted
+    var status = await Permission.sms.request();
+    if (status.isGranted) {
+      // Permission granted, proceed with sending SMS
+      try {
+        String message = "This is An SOS Message !";
+        await sendSMS(message: message, recipients: recipients, sendDirect: true);
+      } catch (e) {
+        // Handle error: Unable to send SMS
+        print('Error: Unable to send SMS');
+      }
+    } else {
+      // Permission denied, handle accordingly
+      print('SMS permission denied');
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,19 +172,11 @@ class _SOSScreenState extends State<SOSScreen> {
                   ),
                   child: Text("Cancel",style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),),
                 ),
-              )
-              ,
-              
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
   }
 }

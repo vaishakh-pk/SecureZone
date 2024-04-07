@@ -124,6 +124,46 @@ static Future<void> deleteReport(String reportId) async {
 }
 
 
+static Future<List<String>> fetchMessageConatcts() async {
+  // Fetch the emergency message contacts from Firestore
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('Emergency')
+        .doc(userId)
+        .collection('EmergencyMessage')
+        .get();
+    List<String> recipients = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data['emergencyMessageNumber'].toString();
+    }).toList();
+
+    return Future.value(recipients);
+  }
+
+  // If the userId is null or any other error occurs, return an empty list
+  return Future.value([]);
+}
+
+static Future<String> fetchCallContacts() async
+{
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  if (userId != null) {
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('Emergency')
+        .doc(userId)
+        .get();
+    String? emergencyCallNumber = snapshot.data()?['emergencyCallNumber'];
+
+    return Future.value(emergencyCallNumber);
+}
+  return Future.value();
+}
+
+
+
 
 
 
