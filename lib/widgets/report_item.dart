@@ -7,6 +7,7 @@ class ReportItemWidget extends StatelessWidget {
   final String role;
   final Function(String) onApprove;
   final Function(String) onDelete;
+  final Function(String) onUserDelete;
 
   ReportItemWidget({
     Key? key,
@@ -14,6 +15,7 @@ class ReportItemWidget extends StatelessWidget {
     required this.role,
     required this.onApprove,
     required this.onDelete,
+    required this.onUserDelete
   }) : super(key: key);
 
   @override
@@ -96,8 +98,21 @@ class ReportItemWidget extends StatelessWidget {
                 ]
           
               )
-              else if(role == "user")
-                  IconButton(onPressed: (){}, icon: Icon(Icons.arrow_circle_right))
+              else if(role == "user" && report['isApproved'] == "false")
+                  IconButton(onPressed: (){onUserDelete(report['reportId']!);}, icon: Icon(Icons.delete_forever, color: Colors.red,))
+              else
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    alignment: Alignment.center,
+                    height: 28,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.green,
+                      
+                    ),
+                    child: Text('Approved',style: TextStyle(color: Colors.white),),
+                  )
             ],
           ),
         ),

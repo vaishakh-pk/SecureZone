@@ -28,7 +28,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   Future<void> fetchReports() async {
     // Call the fetchAllReports method from DBFunctions
-    List<Map<String, String>> fetchedReports = await DBFunctions.fetchAllReports();
+    List<Map<String, String>> fetchedReports = await DBFunctions.fetchUserReports();
     // Update the state with the fetched reports
     setState(() {
       reports = fetchedReports;
@@ -57,6 +57,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
       await DBFunctions.deleteReport(reportId);
       // Refresh the reports list
       fetchUnapproved();
+    }
+  }
+
+  Future<void> deleteUserReport(String reportId) async {
+    if (reportId.isNotEmpty) {
+      await DBFunctions.deleteReport(reportId);
+      // Refresh the reports list
+      fetchReports();
     }
   }
 
@@ -89,6 +97,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 // Call the deleteReport method
                 deleteReport(reportId);
               },
+              onUserDelete: (reportId)
+              {
+                deleteUserReport(reportId);
+              }
             );
           },
         ),

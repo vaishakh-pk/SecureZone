@@ -55,7 +55,7 @@ class DBFunctions {
 
     if (userId != null) {
       QuerySnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('Reports').get();
+          await FirebaseFirestore.instance.collection('Reports').where('isApproved', isEqualTo: true).get();
       reports = snapshot.docs.map((doc) {
         final Map<String, dynamic> data = doc.data()!;
         return data.map((key, value) => MapEntry(key, value.toString()));
@@ -162,6 +162,77 @@ static Future<String> fetchCallContacts() async
   return Future.value();
 }
 
+  static Future<List<Map<String, String>>> fetchAccidentReports() async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  List<Map<String, String>> reports = [];
+
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('Reports')
+        .where('type', isEqualTo: "Accident prone area").where('isApproved', isEqualTo: true)  // Filter reports based on userID
+        .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+  }
+
+  return reports;
+}
+
+  static Future<List<Map<String, String>>> fetchNaturalReports() async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  List<Map<String, String>> reports = [];
+
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('Reports')
+        .where('type', isEqualTo: "Natural Disaster").where('isApproved', isEqualTo: true)  // Filter reports based on userID
+        .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+  }
+
+  return reports;
+}
+
+  static Future<List<Map<String, String>>> fetchTheftReports() async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  List<Map<String, String>> reports = [];
+
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('Reports')
+        .where('type', isEqualTo: "Theft").where('isApproved', isEqualTo: true)  // Filter reports based on userID
+        .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+  }
+
+  return reports;
+}
+
+  static Future<List<Map<String, String>>> fetchMurderReports() async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  List<Map<String, String>> reports = [];
+
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('Reports')
+        .where('type', isEqualTo: "Murder").where('isApproved', isEqualTo: true)  // Filter reports based on userID
+        .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+  }
+
+  return reports;
+}
 
 
 

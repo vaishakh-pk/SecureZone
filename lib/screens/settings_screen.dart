@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:securezone/screens/apply_user_screen.dart';
+import 'package:securezone/screens/crash_detection_screen.dart';
 import 'package:securezone/screens/emergency_contacts_screen.dart';
 import 'package:securezone/screens/phone_authentication_screen.dart';
 import 'package:securezone/screens/tabs.dart';
@@ -7,8 +9,9 @@ import 'package:securezone/services/DBServices.dart';
 import 'package:securezone/widgets/settings_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+SettingsScreen({super.key, required this.role});
 
+  String role;
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -92,13 +95,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   .titleLarge!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
-                            Text(
-                              'superuser@gmail.com',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).hintColor),
-                            )
                           ],
                         ),
                       )
@@ -121,18 +117,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                SettingsTile(titleText: 'SOS Settings', logo: Icons.sos),
+                // SettingsTile(titleText: 'SOS Settings', logo: Icons.sos),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                SettingsTile(
+                    titleText: 'Crash Detection', logo: Icons.car_crash_sharp,passed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => CrashDetectionScreen()));},),
                 const SizedBox(
                   height: 20,
                 ),
+                if(widget.role == "user")
                 SettingsTile(
-                    titleText: 'Crash Detection', logo: Icons.car_crash_sharp),
-                const SizedBox(
-                  height: 20,
-                ),
-                SettingsTile(
-                    titleText: 'privacy Settings',
-                    logo: Icons.privacy_tip_outlined),
+                    titleText: 'Apply for SuperUser',
+                    logo: Icons.supervised_user_circle,
+                    passed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => ApplySuperUserScreen()));},
+                    ),
                 const SizedBox(
                   height: 20,
                 ),

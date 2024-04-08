@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 
 class EmergencyContactScreen extends StatefulWidget {
   const EmergencyContactScreen({Key? key}) : super(key: key);
@@ -86,7 +87,6 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
         _phoneNumber = _phoneNumberController.text;
       });
     }
-    Navigator.pop(context);
   }
 
   void saveNewEmergencyMessageContact() async {
@@ -104,7 +104,6 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
       });
       fetchEmergencyMessageContacts(); // Refresh the list of emergency message contacts
     }
-    Navigator.pop(context);
   }
 
   void saveEditedEmergencyMessageContact(Map<String, String> contact) async {
@@ -166,6 +165,34 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
+              if(_name == null && _phoneNumber == null)
+                
+              InkWell(
+                onTap: () async {
+          final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+          setState(() {
+            _nameController.text = contact.fullName.toString();
+            _phoneNumberController.text =contact.phoneNumber!.number.toString();
+          });
+          saveEmergencyContactDetails();
+        }
+                ,
+                child: Material(
+                  color: Colors.redAccent,
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                      margin: EdgeInsets.all(20),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text("Add more Contacts",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                          textAlign: TextAlign.center)),
+                ),
+              )
+              else
               Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(10),
@@ -181,16 +208,13 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                     children: [
                       Row(
                         children: [
-                          _name != null && _phoneNumber != null
-                              ? Text(
+                          Text(
                                   _name!,
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold),
-                                )
-                              : Text('None',
-                                  style: TextStyle(color: Colors.grey)),
+                                ),
                           Spacer(),
                           IconButton(
                             onPressed: () async {
@@ -427,48 +451,19 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
                 height: 10,
               ),
               InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Add Emergency Message Contact"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextField(
-                              controller: _newMessageNameController,
-                              decoration: InputDecoration(labelText: 'Name'),
-                            ),
-                            TextField(
-                              controller: _newMessageNumberController,
-                              decoration:
-                                  InputDecoration(labelText: 'Phone Number'),
-                              keyboardType: TextInputType.phone,
-                            ),
-                          ],
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              if (_newMessageNameController.text.isNotEmpty &&
-                                  _newMessageNumberController.text.isNotEmpty) {
-                                saveNewEmergencyMessageContact();
-                              }
-                            },
-                            child: Text('Save'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                onTap: () async {
+          final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+          setState(() {
+            _newMessageNameController.text = contact.fullName.toString();
+            _newMessageNumberController.text =contact.phoneNumber!.number.toString();
+          });
+          saveNewEmergencyMessageContact();
+          setState(() {
+            _newMessageNameController.text =  '';
+            _newMessageNumberController.text = '';
+          });
+        }
+                ,
                 child: Material(
                   color: Colors.redAccent,
                   elevation: 5,

@@ -7,9 +7,10 @@ import 'package:securezone/services/DBServices.dart';
 import 'package:securezone/widgets/search_bar.dart';
 import 'package:securezone/widgets/type_filter_list.dart';
 class HomeScreen extends StatefulWidget {
-HomeScreen({super.key, required this.role});
+HomeScreen({super.key, required this.role, this.filter});
 
   String role;
+  String? filter;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,13 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const GMapScreen(),
+           GMapScreen(filter: widget.filter),
           SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const SearchBarApp(),
-                TypeFilterList(),
+                // const SearchBarApp(),
+                SizedBox(height: 30,),
+                TypeFilterList(role: widget.role),
                 const Spacer(),
                 if (widget.role == "user")
                   Container(

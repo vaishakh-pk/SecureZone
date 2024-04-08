@@ -12,8 +12,8 @@ var knavbartheme = const Color.fromARGB(255, 201, 28, 28);
 var knavbarselected = const Color.fromARGB(255, 255, 222, 222);
 
 class TabsScreen extends StatefulWidget {
- TabsScreen({super.key, required this.role});
-
+ TabsScreen({super.key, required this.role,this.filter});
+  String? filter;
   String role;
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -70,7 +70,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     // Widget activePage = HomeScreen();
-     Widget activePage = HomeScreen(role: widget.role);
+     Widget activePage = HomeScreen(role: widget.role, filter: widget.filter);
   
     if (currentPageIndex == 1) {
       activePage = ReportsScreen(role: widget.role,);
@@ -87,7 +87,7 @@ class _TabsScreenState extends State<TabsScreen> {
     } else if (currentPageIndex == 3) {
       activePage = NewsScreen();
     } else if (currentPageIndex == 4) {
-      activePage = SettingsScreen();
+      activePage = SettingsScreen(role: widget.role,);
     }
 
     return Scaffold(
@@ -131,7 +131,6 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
           NavigationDestination(
             icon: Badge(
-              label: Text('2'),
               child: Icon(
                 Icons.newspaper_outlined,
                 color: knavbartheme,
