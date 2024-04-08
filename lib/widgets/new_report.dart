@@ -99,9 +99,6 @@ class _NewReportState extends State<NewReport> {
                       child: Text('Natural Disaster'),
                       value: 'Natural Disaster'),
                   DropdownMenuItem(child: Text('Theft'), value: 'Theft'),
-                  DropdownMenuItem(
-                      child: Text('Pickpocketing'), value: 'Pickpocketing'),
-                  DropdownMenuItem(child: Text('Assault'), value: 'Assault'),
                   DropdownMenuItem(child: Text('Murder'), value: 'Murder'),
                   DropdownMenuItem(child: Text('Other'), value: 'Other'),
                 ],
@@ -190,6 +187,8 @@ class _NewReportState extends State<NewReport> {
             
             ElevatedButton(
                 onPressed: () async {
+                  if(_titleController.text != '')
+                  {
                   await DBFunctions.addNewReport(
                       _titleController,
                       _descriptionController,
@@ -200,10 +199,10 @@ class _NewReportState extends State<NewReport> {
 
                     _titleController.text = '';
                       _descriptionController.text = '';
-                      _typeController.text = '';
                       _yearController.text = '';
                       _urlController.text = '';
                   Navigator.pop(context);
+                  }
                 },
                 style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

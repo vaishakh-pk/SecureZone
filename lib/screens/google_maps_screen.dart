@@ -228,7 +228,7 @@ class _GMapScreenState extends State<GMapScreen> {
         mapType: MapType.normal,
         onMapCreated: ((GoogleMapController controller) =>
             _mapController.complete(controller)),
-        initialCameraPosition: CameraPosition(target: _pGooglePlex, zoom: 12.5),
+        initialCameraPosition: CameraPosition(target: _pGooglePlex, zoom: 10),
         circles: circles,
         markers: {
           Marker(

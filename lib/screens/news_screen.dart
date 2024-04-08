@@ -21,7 +21,7 @@ class _NewsScreenState extends State<NewsScreen> {
 
 Future<void> fetchReports() async {
     // Call the fetchAllReports method from DBFunctions
-    List<Map<String, String>> fetchedReports = await DBFunctions.fetchAllReports();
+    List<Map<String, String>> fetchedReports = await DBFunctions.fetchAllNews();
     // Update the state with the fetched reports
     setState(() {
       news = fetchedReports;
@@ -47,6 +47,7 @@ Future<void> fetchReports() async {
           itemCount: news.length,
           itemBuilder: (context, index) {
             final newsData = news[index];
+            // if(newsData['type'] != 'Accident prone area' && newsData['type'] != 'Natural Disaster')
             return NewsItemWidget(news: newsData);
           },
         ),

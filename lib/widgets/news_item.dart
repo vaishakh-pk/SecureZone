@@ -37,6 +37,12 @@ class NewsItemWidget extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)
                       ),
                     ),
+                    SizedBox(height: 8,),
+                    Text(
+                      news['type'] ?? '',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 4.0),
                     const SizedBox(height: 8.0),
                     Text(
                       news['description'] ?? '',

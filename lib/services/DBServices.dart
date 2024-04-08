@@ -235,6 +235,27 @@ static Future<String> fetchCallContacts() async
 }
 
 
+static Future<List<Map<String, String>>> fetchAllNews() async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  List<Map<String, String>> reports = [];
+
+  if (userId != null) {
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('Reports')
+            .where('isApproved', isEqualTo: true)
+            .where('type', whereIn: ['Theft', 'Murder','Other']) // Changed this line
+            .get();
+    reports = snapshot.docs.map((doc) {
+      final Map<String, dynamic> data = doc.data()!;
+      return data.map((key, value) => MapEntry(key, value.toString()));
+    }).toList();
+  }
+
+  return reports;
+}
+
+
+
 
 
 
